@@ -95,6 +95,8 @@ class GameSimulator extends FlameGame {
 }
 
 class Player extends PositionComponent {
+  late StreamSubscription<Gyroscope.Event> _gyroscopeSubscription;
+
   @override
   void onMount() {
     position = Vector2(100, 100);
