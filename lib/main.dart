@@ -90,12 +90,60 @@ class GameSimulator extends FlameGame {
     return const Color.fromARGB(255, 25, 25, 25);
   }
 
+  GameSimulator() : super() {
+    camera = CameraComponent.withFixedResolution(
+      width: 600,
+      height: 1000,
+    );
+  }
+
+  final Player myAppPlayer = Player();
   @override
   void onMount() {
     super.onMount();
 
     //we will add the player here
-    add(Player());
+    world.add(myAppPlayer);
+    world.add(RectangleComponent(
+      size: Vector2(10, 10),
+      position: Vector2(-100, -100),
+      angle: 0.0,
+      anchor: Anchor.center,
+      paint: Paint()..color = Color.fromARGB(255, 255, 253, 160).withOpacity(0.5),
+    ));
+
+    /*
+    Now we need to fill the world with lots of dots to show the ground. We will use the magnetometer sensor to rotate the world.
+    lets create lots of dots in the world.
+    
+     */
+
+    world.addAll(dotGrid());
+
+    camera.follow(myAppPlayer);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+  }
+
+  List<RectangleComponent> dotGrid() {
+    List<RectangleComponent> dots = [];
+    for (int i = -600; i < 300; i += 50) {
+      for (int j = -1000; j < 500; j += 50) {
+        dots.add(
+          RectangleComponent(
+            size: Vector2(5, 5),
+            position: Vector2(i.toDouble(), j.toDouble()),
+            angle: 0.0,
+            anchor: Anchor.center,
+            paint: Paint()..color = Color.fromARGB(255, 255, 253, 160).withOpacity(0.5),
+          ),
+        );
+      }
+    }
+    return dots;
   }
 }
 
@@ -106,19 +154,18 @@ class Player extends PositionComponent with HasGameRef<GameSimulator> {
 
   @override
   void onMount() {
+    anchor = Anchor.topCenter;
     //initializing my position as (100,100)
-    position = Vector2(100, 100);
+
     text = TextComponent(
       text: 'velocity due to gyro is: 0, 0',
-      size: Vector2(10, 10),
       scale: Vector2(0.7, 0.7),
-    )
-      ..anchor = Anchor.topCenter
-      ..x = position.x + 50
-      ..y = position.y - 20; //static postion for the text component
+    );
+    //static postion for the text component
     _gyroscopeStream = gyroscopeEvents.listen((GyroscopeEvent event) {
       _velocity = Vector2(event.y, event.x);
       text.text = 'Gyro Stream: ${event.x.toStringAsFixed(3)}, ${event.y.toStringAsFixed(3)}';
+      text.position = Vector2(80, 100);
     });
 
     gameRef.add(text);
@@ -134,6 +181,7 @@ class Player extends PositionComponent with HasGameRef<GameSimulator> {
     // log('Player position: $position');
 
     //show in app the player position using the text just above the player
+    // log('Player position: $position');
   }
 
   @override
@@ -141,6 +189,15 @@ class Player extends PositionComponent with HasGameRef<GameSimulator> {
     super.render(canvas);
 
     // drawing the player
-    canvas.drawCircle(position.toOffset(), 15, Paint()..color = Color.fromARGB(255, 191, 203, 255));
+    canvas.drawCircle(position.toOffset(), 15, Paint()..color = const Color.fromARGB(255, 191, 203, 255));
   }
 }
+
+
+/*
+
+
+Now we are gonna keep the player at the center while allowing for the rotation of the world using the magnetometer sensor.
+
+ */
+
