@@ -1,6 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 //we are gonna have a dingle screen in this game:
 /*
@@ -86,7 +92,6 @@ class GameSimulator extends FlameGame {
 
   @override
   void onMount() {
-    // TODO: implement onMount
     super.onMount();
 
     //we will add the player here
@@ -94,12 +99,29 @@ class GameSimulator extends FlameGame {
   }
 }
 
-class Player extends PositionComponent {
-  late StreamSubscription<Gyroscope.Event> _gyroscopeSubscription;
+class Player extends PositionComponent with HasGameRef<GameSimulator> {
+  late StreamSubscription<GyroscopeEvent> _gyroscopeStream; //gyroscope stream
+  var _velocity = Vector2(0, 0); //velocity of the player
+  late TextComponent text; // Declare text component here
 
   @override
   void onMount() {
+    //initializing my position as (100,100)
     position = Vector2(100, 100);
+    text = TextComponent(
+      text: 'velocity due to gyro is: 0, 0',
+      size: Vector2(10, 10),
+      scale: Vector2(0.7, 0.7),
+    )
+      ..anchor = Anchor.topCenter
+      ..x = position.x + 50
+      ..y = position.y - 20; //static postion for the text component
+    _gyroscopeStream = gyroscopeEvents.listen((GyroscopeEvent event) {
+      _velocity = Vector2(event.y, event.x);
+      text.text = 'Gyro Stream: ${event.x.toStringAsFixed(3)}, ${event.y.toStringAsFixed(3)}';
+    });
+
+    gameRef.add(text);
 
     super.onMount();
   }
@@ -107,6 +129,11 @@ class Player extends PositionComponent {
   @override
   void update(double dt) {
     super.update(dt);
+    //updating my position
+    position += _velocity * dt * 100;
+    // log('Player position: $position');
+
+    //show in app the player position using the text just above the player
   }
 
   @override
