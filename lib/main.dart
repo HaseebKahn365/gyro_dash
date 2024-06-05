@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
 
+//we are gonna have a dingle screen in this game:
+/*
+Simulator: Here we can simulate the gyroscope sensor and magnetometer.
+The concept of gyroscope is to control the motion of the player in the game.
+the magnetometer is used to rotate the world.
+the word is filled with rounded dots to show that the player is moving and also rotating the world (actually the world will rotate not the player).
+
+
+ */
+
 void main() {
   runApp(const MyApp());
 }
@@ -10,12 +20,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Gyro Dash',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Gyro Dash'),
     );
   }
 }
@@ -31,12 +41,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
