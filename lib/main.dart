@@ -149,8 +149,10 @@ class GameSimulator extends FlameGame {
 
 class Player extends PositionComponent with HasGameRef<GameSimulator> {
   late StreamSubscription<GyroscopeEvent> _gyroscopeStream; //gyroscope stream
+  late StreamSubscription<MagnetometerEvent> _magnetometerStream; //magnetometer stream
   var _velocity = Vector2(0, 0); //velocity of the player
   late TextComponent text; // Declare text component here
+  late TextComponent text2; // Declaring my text component here for the magnetometer
 
   @override
   void onMount() {
@@ -161,14 +163,26 @@ class Player extends PositionComponent with HasGameRef<GameSimulator> {
       text: 'velocity due to gyro is: 0, 0',
       scale: Vector2(0.7, 0.7),
     );
+
+    text2 = TextComponent(
+      text: 'velocity due to magnetometer is: 0, 0',
+      scale: Vector2(0.7, 0.7),
+    );
     //static postion for the text component
     _gyroscopeStream = gyroscopeEvents.listen((GyroscopeEvent event) {
       _velocity = Vector2(event.y, event.x);
       text.text = 'Gyro Stream: ${event.x.toStringAsFixed(3)}, ${event.y.toStringAsFixed(3)}';
-      text.position = Vector2(80, 100);
+      text.position = Vector2(80, 60);
     });
 
+    //magnetometer stream
+    // _magnetometerStream = magnetometerEvents.listen((MagnetometerEvent event) {
+    //   text2.text = 'Magnetometer Stream: ${event.x.toStringAsFixed(3)}, ${event.y.toStringAsFixed(3)}';
+    //   text2.position = Vector2(60, 80);
+    // });
+
     gameRef.add(text);
+    gameRef.add(text2);
 
     super.onMount();
   }
@@ -193,11 +207,9 @@ class Player extends PositionComponent with HasGameRef<GameSimulator> {
   }
 }
 
-
 /*
 
 
 Now we are gonna keep the player at the center while allowing for the rotation of the world using the magnetometer sensor.
 
  */
-
