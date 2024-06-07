@@ -216,7 +216,7 @@ class Player extends PositionComponent with HasGameRef<GameSimulator> {
     //updating my position
     //we need to add translational motion to the player based on the gyroscope sensor
     // log('Player position: $position');
-
+    position += _velocity * 0.5 * dt;
     //calculating the offset of the player from the center and adding this offset the position of the player
     //this will make the player move in the direction of the gyroscope sensor
 
